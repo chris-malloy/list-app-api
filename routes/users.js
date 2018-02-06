@@ -3,6 +3,7 @@ var router = express.Router();
 var config = require('../config/config')
 var mysql = require('mysql')
 var bcrypt = require('bcrypt-nodejs')
+var randToken = require('rand-token')
 var connection = mysql.createConnection(config);
 connection.connect();
 
