@@ -6,13 +6,14 @@ var bcrypt = require('bcrypt-nodejs')
 var connection = mysql.createConnection(config);
 connection.connect();
 
-router.post('/signup', (req, res, next) => {
+router.post('/register', (req, res, next) => {
+  console.log('register')
   var name = req.body.name
   var email = req.body.email
   var password = req.body.password
   var hash = bcrypt.hashSync(password)
   const token = randToken.uid(60);
-  var selectQuery = `SELECT * from user WHERE email = ?;`;
+  var selectQuery = `SELECT * from users WHERE email = ?;`;
   connection.query(selectQuery, [email], (error, results) => {
     if (error) {
       throw error;
@@ -21,7 +22,7 @@ router.post('/signup', (req, res, next) => {
         msg: "emailTaken"
       })
     } else {
-      var insertQuery = `INSERT INTO user (name,email,password,token) VALUES (?,?,?,?);`;
+      var insertQuery = `INSERT INTO users (name,email,password,token) VALUES (?,?,?,?);`;
       connection.query(insertQuery, [name, email, hash, token], (error, results) => {
         if (error) {
           throw error
@@ -39,6 +40,7 @@ router.post('/signup', (req, res, next) => {
 })
 
 router.post('/login', (req, res, next) => {
+  console.log('login')
   var email = req.body.email
   // case for when password is undefined
   if (req.body.password !== undefined) {
@@ -46,7 +48,7 @@ router.post('/login', (req, res, next) => {
   } else {
     var password = '';
   }
-  var selectQuery = 'SELECT * FROM user WHERE email = ?;';
+  var selectQuery = 'SELECT * FROM users WHERE email = ?;';
   connection.query(selectQuery, [email], (error, results) => {
     if (error) {
       throw error
